@@ -1,0 +1,97 @@
+{
+  "signatures": [
+    {
+      "id": 1001,
+      "rev": 1,
+      "name": "SQLi - UNION SELECT",
+      "action": "drop",
+      "severity": "HIGH",
+      "mitre_technique": "T1190",
+      "direction": "inbound",
+      "protocol": "tcp",
+      "dst_port": 80,
+      "pattern": "(?i)union(\\s+|\\/\\*.*?\\*\\/|\\()select",
+      "description": "Попытка извлечения данных через объединение запросов SQL (UNION SELECT)"
+    },
+    {
+      "id": 1002,
+      "rev": 1,
+      "name": "SQLi - Tautology Bypass",
+      "action": "drop",
+      "severity": "HIGH",
+      "mitre_technique": "T1190",
+      "direction": "inbound",
+      "protocol": "tcp",
+      "dst_port": 80,
+      "pattern": "(?i)('\\s*or\\s*['0-9]=\\s*['0-9]|or\\s+1=1|'\\s*or\\s*'1'='1|\\b(or|and)\\b\\s+(['\"\\d\\w]+)\\s*=\\s*\\3)",
+      "description": "Обход аутентификации через логическое тождество (OR 1=1)"
+    },
+    {
+      "id": 1003,
+      "rev": 1,
+      "name": "Path Traversal",
+      "action": "drop",
+      "severity": "HIGH",
+      "mitre_technique": "T1190",
+      "direction": "inbound",
+      "protocol": "tcp",
+      "dst_port": null,
+      "pattern": "(\\.\\.[\\/\\\\]|\\/etc\\/passwd|win\\.ini)",
+      "description": "Попытка несанкционированного доступа к файлам за пределами веб-каталога"
+    },
+    {
+      "id": 1004,
+      "rev": 1,
+      "name": "XSS - Script Injection",
+      "action": "alert",
+      "severity": "MEDIUM",
+      "mitre_technique": "T1059.007",
+      "direction": "inbound",
+      "protocol": "tcp",
+      "dst_port": 80,
+      "pattern": "(?i)(<script.*?>|javascript:|onerror\\s*=|onload\\s*=)",
+      "description": "Внедрение вредоносного клиентского сценария (Cross-Site Scripting)"
+    },
+    {
+      "id": 1005,
+      "rev": 1,
+      "name": "RCE - OS Command Injection",
+      "action": "drop",
+      "severity": "CRITICAL",
+      "mitre_technique": "T1190",
+      "direction": "inbound",
+      "protocol": "tcp",
+      "dst_port": 80,
+      "pattern": "(?i)(;|\\||`|\\$\\()\\s*(cat\\s+|whoami|uname|id|nc\\s+|bash|sh|curl|wget)",
+      "description": "Попытка выполнения системных команд через параметры запроса"
+    }
+  ],
+  "behavioral": [
+    {
+      "id": 2001,
+      "rev": 1,
+      "name": "Port Scanning Activity",
+      "action": "alert",
+      "severity": "LOW",
+      "mitre_technique": "T1046",
+      "direction": "inbound",
+      "type": "port_scan",
+      "threshold": 15,
+      "window_seconds": 3,
+      "description": "Сетевая разведка: превышен порог обращения к уникальным портам хоста за 3 секунды"
+    },
+    {
+      "id": 2002,
+      "rev": 1,
+      "name": "SYN Flood / DoS",
+      "action": "drop",
+      "severity": "HIGH",
+      "mitre_technique": "T1498",
+      "direction": "inbound",
+      "type": "syn_flood",
+      "threshold": 50,
+      "window_seconds": 1,
+      "description": "Аномальная плотность входящих пакетов с флагом SYN без завершения TCP-рукопожатия"
+    }
+  ]
+}
